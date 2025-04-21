@@ -1,12 +1,11 @@
 package main
 
 import (
+	"github.com/gin-gonic/gin"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
 	"strings"
-
-	"github.com/gin-gonic/gin"
 )
 
 func proxy(c *gin.Context) {
@@ -16,7 +15,6 @@ func proxy(c *gin.Context) {
 		return
 	}
 	proxy := httputil.NewSingleHostReverseProxy(remote)
-
 	originalDirector := proxy.Director
 	proxy.Director = func(req *http.Request) {
 		originalDirector(req)
@@ -26,7 +24,6 @@ func proxy(c *gin.Context) {
 		}
 		req.URL.Path = strings.TrimSuffix(remote.Path, "/") + proxyPath
 	}
-
 	proxy.ServeHTTP(c.Writer, c.Request)
 }
 
